@@ -1,0 +1,129 @@
+# =========================
+# Python
+# =========================
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.pyo
+
+# =========================
+# Node
+# =========================
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# =========================
+# Build
+# =========================
+dist/
+build/
+dist-electron/
+release/
+
+# =========================
+# Environment
+# =========================
+.env
+.env.local
+backend/.env
+frontend/.env
+
+# Keep examples
+!.env.example
+
+# =========================
+# Models
+# =========================
+models/
+backend/models/
+*.gguf
+*.bin
+*.pt
+*.pth
+*.onnx
+*.safetensors
+*.ckpt
+
+# =========================
+# Databases
+# =========================
+vector_db/
+chroma_db/
+backend/vector_db/
+backend/chroma_db/
+
+# =========================
+# Uploads
+# =========================
+uploads/
+backend/uploads/
+backend/extracted_images/
+
+# =========================
+# Logs
+# =========================
+logs/
+*.log
+audit_log.json
+
+# =========================
+# Cache
+# =========================
+.cache/
+.pytest_cache/
+.mypy_cache/
+
+# =========================
+# OS
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# VS Code
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# Electron
+# =========================
+*.exe
+*.dmg
+*.AppImage
+*.deb
+
+
+# Electron build
+frontend/dist-electron.zip
+
+# OCR generated images
+backend/images/extracted_images/
+
+# Electron build output
+frontend/dist-electron/
+
+# React build
+frontend/dist/
+
+# Python cache
+backend/__pycache__/
+
+# Uploaded documents
+backend/uploads/
+
+# Chroma database
+backend/vector_db/
+
+# Virtual environment
+.venv/
+
+# Node modules
+frontend/node_modules/
+
+# Environment files
+.env
+backend/.env
+frontend/.env

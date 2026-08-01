@@ -1,0 +1,45 @@
+Exact Checklist To Complete Right Now
+1. Save your package.json
+Make sure you replaced your frontend/package.json with the updated code provided in the previous message.
+
+2. Install helper packages (Run once in Terminal)
+Open PowerShell in D:\Secure RAG\frontend and run:
+
+PowerShell
+npm install --save-dev concurrently wait-on
+3. To Develop & See Instant Code Updates:
+Whenever you want to test or make changes to your React/TypeScript code, run:
+
+PowerShell
+npm run electron:dev
+Result: Vite starts and Electron opens automatically. Any changes you save in your editor will update live in the desktop window!
+
+4. To Build the Permanent Windows Desktop App (.exe):
+When your code is ready and you want the real installed desktop app with an icon on your Windows desktop:
+
+PowerShell
+npm run electron:build
+Where to find your app:
+Go to D:\Secure RAG\frontend\dist-electron\ and double-click SecureRAG Enterprise Setup 1.0.0.exe.
+
+Result: It installs onto your PC, creates a desktop shortcut with your logo, and shows up in your Windows Start Menu!
+
+
+
+Yes, you must run the installer (.exe) again to apply the changes to the installed desktop application.
+
+Why You Need to Re-install
+Running npm run electron:build creates a brand-new installer file in your dist-electron folder. It does not automatically update the version of the app currently installed on your Windows system.
+
+How to Apply the Fix cleanly:
+Close the running app: Make sure the white/blank window of "SecureRAG Enterprise" is completely closed (check Task Manager if needed to ensure it isn't running in the background).
+
+Run the new installer:
+
+Go to D:\Secure RAG\frontend\dist-electron\
+
+Double-click SecureRAG Enterprise Setup 1.0.0.exe
+
+Follow the installation steps to overwrite the old installed version.
+
+Launch the updated app: Open it from your desktop shortcut or Start Menu—the white screen issue will now be fixed!
