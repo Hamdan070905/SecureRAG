@@ -1,5 +1,4 @@
 name: Build SecureRAG
-
 on:
   push:
     branches: [main]
@@ -10,7 +9,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-node@v4
         with:
           node-version: 18
@@ -22,7 +21,8 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m venv .venv
-          .venv\Scripts\pip install -r backend/requirements.txt
+          .venv\Scripts\pip install --upgrade pip
+          .venv\Scripts\pip install -r backend/requirements.txt --use-deprecated=legacy-resolver
         shell: cmd
 
       - name: Install Node dependencies
@@ -54,7 +54,8 @@ jobs:
       - name: Install Python dependencies
         run: |
           python3 -m venv .venv
-          .venv/bin/pip install -r backend/requirements.txt
+          .venv/bin/pip install --upgrade pip
+          .venv/bin/pip install -r backend/requirements.txt --use-deprecated=legacy-resolver
 
       - name: Install Node dependencies
         run: npm install
