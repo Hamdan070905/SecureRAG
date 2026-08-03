@@ -73,9 +73,10 @@ function startPythonBackend() {
 
   const getPythonExecutable = () => {
     const isWin = process.platform === "win32";
-    return app.isPackaged
-      ? path.join(process.resourcesPath, '.venv', isWin ? 'Scripts/python.exe' : 'bin/python3')
-      : path.join(__dirname, '..', '..', '.venv', isWin ? 'Scripts/python.exe' : 'bin/python3');
+    if (app.isPackaged) {
+      return path.join(process.resourcesPath, 'backend', 'python', isWin ? 'python.exe' : 'python3');
+    }
+    return isWin ? 'python' : 'python3';
   };
 
   const getBackendScript = () => {
@@ -95,7 +96,7 @@ function startPythonBackend() {
   logStream.write(`Script Path: ${scriptPath}\n`);
   logStream.write(`CWD: ${backendCwd}\n`);
 
-  if (!fs.existsSync(pythonPath)) {
+  if (!fs.existsSync(pythonPath) && app.isPackaged) {
     const errorMsg = `Python binary not found at:\n${pythonPath}`;
     logStream.write(`[ERROR]: ${errorMsg}\n`);
     dialog.showErrorBox("Backend Initialization Failed", errorMsg);
