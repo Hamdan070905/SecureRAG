@@ -17,8 +17,15 @@ from pydantic import BaseModel
 from typing import Optional, List, Union
 
 
-import whisper
-whisper_model = whisper.load_model("base")
+_whisper_model = None
+
+def get_whisper_model():
+    global _whisper_model
+    if _whisper_model is None:
+        import whisper
+        print("Lazy Loading Whisper model...")
+        _whisper_model = whisper.load_model("base")
+    return _whisper_model
 
 from rag_engine import (
     evaluate_answer, process_document, retrieve_chunks, expand_parent_context,
@@ -437,7 +444,7 @@ async def transcribe(file: UploadFile = File(...)):
     path = f"uploads/audio_{int(time.time())}.wav"
     with open(path, "wb") as f:
         shutil.copyfileobj(file.file, f)
-    result = whisper_model.transcribe(
+    result = get_whisper_model().transcribe(
     path,
     fp16=False,
     language="en"

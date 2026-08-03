@@ -68,20 +68,28 @@ def clean_llm_response(text: str) -> str:
 
 load_dotenv()
 
-print("Loading embedding model (MiniLM)...")
-_EMBED_DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-embedder = SentenceTransformer("paraphrase-MiniLM-L3-v2", device=_EMBED_DEVICE)
+_embedder = None
+_reranker = None
 
-print("Loading Cross Encoder (ms-marco-MiniLM)...")
-reranker = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2", device=_EMBED_DEVICE)
+def get_embedder():
+    global _embedder
+    if _embedder is None:
+        print("Lazy Loading embedding model (MiniLM)...")
+        _EMBED_DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+        _embedder = SentenceTransformer("paraphrase-MiniLM-L3-v2", device=_EMBED_DEVICE)
+        try:
+            _embedder.encode(["warmup"], batch_size=1)
+        except Exception:
+            pass
+    return _embedder
 
-print("Cross Encoder Ready!")
-# PRE-WARM (eliminates first-call delay)
-try:
-    embedder.encode(["warmup"], batch_size=1)
-except Exception:
-    pass
-print("Model ready!")
+def get_reranker():
+    global _reranker
+    if _reranker is None:
+        print("Lazy Loading Cross Encoder (ms-marco-MiniLM)...")
+        _EMBED_DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+        _reranker = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2", device=_EMBED_DEVICE)
+    return _reranker
 
 def compute_embeddings(texts: list, task_type: str = "document", titles: list = None, image_paths: list = None) -> list:
     use_gemini = os.getenv("USE_GEMINI_EMBEDDING", "false").lower() == "true"
@@ -112,15 +120,13 @@ def compute_embeddings(texts: list, task_type: str = "document", titles: list = 
             results.append(res['embedding'])
         return results
     else:
-        return embedder.encode(
+        return get_embedder().encode(
             texts,
             show_progress_bar=False,
             normalize_embeddings=True
         ).tolist()
 
-print("Loading OCR...")
-ocr_reader = easyocr.Reader(['en'], gpu=torch.cuda.is_available())
-print("OCR Ready!")
+
 
 groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
@@ -1370,7 +1376,7 @@ def rerank_chunks(query, chunks):
         for chunk in chunks
     ]
 
-    scores = reranker.predict(pairs)
+    scores = get_reranker().predict(pairs)
 
     for chunk, score in zip(chunks, scores):
         chunk["rerank_score"] = float(score)

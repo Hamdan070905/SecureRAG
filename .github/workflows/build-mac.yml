@@ -23,7 +23,7 @@ jobs:
           pip install pyinstaller
           pip install -r backend/requirements.txt --ignore-requires-python
           cd backend
-          pyinstaller --onefile --name backend main.py
+          pyinstaller --onefile --collect-all chromadb --name backend main.py
         shell: cmd
 
       - name: Install Node dependencies
@@ -61,7 +61,7 @@ jobs:
           pip3 install pyinstaller
           pip3 install -r backend/requirements.txt --ignore-requires-python
           cd backend
-          pyinstaller --onefile --name backend main.py
+          pyinstaller --onefile --collect-all chromadb --name backend main.py
 
       - name: Install Node dependencies
         run: |
