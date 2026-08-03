@@ -1,5 +1,4 @@
 name: Build SecureRAG
-
 on:
   push:
     branches: [main]
@@ -10,7 +9,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-node@v4
         with:
           node-version: 18
@@ -19,24 +18,30 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install Python dependencies
+      - name: Build Python executable
         run: |
-          python -m venv .venv
-          .venv\Scripts\pip install -r backend/requirements.txt
+          pip install pyinstaller
+          pip install -r backend/requirements.txt --ignore-requires-python
+          cd backend
+          pyinstaller --onefile --name backend main.py
         shell: cmd
 
       - name: Install Node dependencies
-        run: npm install
+        run: |
+          cd frontend
+          npm install
 
       - name: Build Windows
-        run: npm run electron:build
+        run: |
+          cd frontend
+          npm run electron:build
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/upload-artifact@v4
         with:
           name: windows-build
-          path: dist-electron/*.exe
+          path: frontend/dist-electron/*.exe
 
   build-mac:
     runs-on: macos-latest
@@ -51,20 +56,26 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install Python dependencies
+      - name: Build Python executable
         run: |
-          python3 -m venv .venv
-          .venv/bin/pip install -r backend/requirements.txt
+          pip3 install pyinstaller
+          pip3 install -r backend/requirements.txt --ignore-requires-python
+          cd backend
+          pyinstaller --onefile --name backend main.py
 
       - name: Install Node dependencies
-        run: npm install
+        run: |
+          cd frontend
+          npm install
 
       - name: Build Mac
-        run: npm run electron:build
+        run: |
+          cd frontend
+          npm run electron:build
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/upload-artifact@v4
         with:
           name: mac-build
-          path: dist-electron/*.dmg
+          path: frontend/dist-electron/*.dmg
