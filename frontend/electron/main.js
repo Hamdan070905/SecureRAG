@@ -71,17 +71,6 @@ function startPythonBackend() {
   
   logStream.write(`\n--- Launching App: ${new Date().toISOString()} ---\n`);
 
-<<<<<<< HEAD
-=======
-  const getPythonExecutable = () => {
-    const isWin = process.platform === "win32";
-    if (app.isPackaged) {
-      return path.join(process.resourcesPath, 'backend', 'python', isWin ? 'python.exe' : 'python3');
-    }
-    return isWin ? 'python' : 'python3';
-  };
-
->>>>>>> 90352cd311ac2002592d4c824327df8924aec370
   const getBackendScript = () => {
     const ext = process.platform === "win32" ? "backend.exe" : "backend";
     return app.isPackaged
@@ -97,16 +86,6 @@ function startPythonBackend() {
   logStream.write(`Executable Path: ${scriptPath}\n`);
   logStream.write(`CWD: ${backendCwd}\n`);
 
-<<<<<<< HEAD
-=======
-  if (!fs.existsSync(pythonPath) && app.isPackaged) {
-    const errorMsg = `Python binary not found at:\n${pythonPath}`;
-    logStream.write(`[ERROR]: ${errorMsg}\n`);
-    dialog.showErrorBox("Backend Initialization Failed", errorMsg);
-    return;
-  }
-
->>>>>>> 90352cd311ac2002592d4c824327df8924aec370
   if (!fs.existsSync(scriptPath)) {
     const errorMsg = `Backend executable not found at:\n${scriptPath}`;
     logStream.write(`[ERROR]: ${errorMsg}\n`);
