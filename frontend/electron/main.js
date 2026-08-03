@@ -71,48 +71,32 @@ function startPythonBackend() {
   
   logStream.write(`\n--- Launching App: ${new Date().toISOString()} ---\n`);
 
-  const getPythonExecutable = () => {
-    const isWin = process.platform === "win32";
-    return app.isPackaged
-      ? path.join(process.resourcesPath, '.venv', isWin ? 'Scripts/python.exe' : 'bin/python3')
-      : path.join(__dirname, '..', '..', '.venv', isWin ? 'Scripts/python.exe' : 'bin/python3');
-  };
-
   const getBackendScript = () => {
-    if (!app.isPackaged) {
-      return path.join(__dirname, '..', '..', 'backend', 'main.py');
-    }
-    return path.join(process.resourcesPath, 'backend', 'main.py');
+    const ext = process.platform === "win32" ? "backend.exe" : "backend";
+    return app.isPackaged
+      ? path.join(process.resourcesPath, 'backend', ext)
+      : path.join(__dirname, '..', '..', 'backend', 'dist', ext);
   };
 
-  const pythonPath = getPythonExecutable();
   const scriptPath = getBackendScript();
   const backendCwd = app.isPackaged 
     ? path.join(process.resourcesPath, 'backend') 
     : path.join(__dirname, '..', '..', 'backend');
 
-  logStream.write(`Python Path: ${pythonPath}\n`);
-  logStream.write(`Script Path: ${scriptPath}\n`);
+  logStream.write(`Executable Path: ${scriptPath}\n`);
   logStream.write(`CWD: ${backendCwd}\n`);
 
-  if (!fs.existsSync(pythonPath)) {
-    const errorMsg = `Python binary not found at:\n${pythonPath}`;
-    logStream.write(`[ERROR]: ${errorMsg}\n`);
-    dialog.showErrorBox("Backend Initialization Failed", errorMsg);
-    return;
-  }
-
   if (!fs.existsSync(scriptPath)) {
-    const errorMsg = `Backend main script not found at:\n${scriptPath}`;
+    const errorMsg = `Backend executable not found at:\n${scriptPath}`;
     logStream.write(`[ERROR]: ${errorMsg}\n`);
     dialog.showErrorBox("Backend Initialization Failed", errorMsg);
     return;
   }
 
-  pyProc = spawn(pythonPath, [scriptPath], {
+  pyProc = spawn(scriptPath, [], {
     cwd: backendCwd,
     windowsHide: true,
-    env: { ...process.env, PYTHONUNBUFFERED: "1" }
+    env: { ...process.env }
   });
 
   pyProc.on("error", (err) => {
@@ -141,7 +125,11 @@ function startPythonBackend() {
 
 function stopPythonBackend() {
   if (pyProc !== null) {
-    spawn("taskkill", ["/pid", pyProc.pid, "/f", "/t"], { windowsHide: true });
+    if (process.platform === "win32") {
+      spawn("taskkill", ["/pid", pyProc.pid, "/f", "/t"], { windowsHide: true });
+    } else {
+      pyProc.kill("SIGKILL");
+    }
     pyProc = null;
   }
 }

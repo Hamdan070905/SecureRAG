@@ -75,18 +75,12 @@
     ],
     "extraResources": [
       {
-        "from": "../.venv",
-        "to": ".venv",
+        "from": "../backend/dist",
+        "to": "backend",
         "filter": [
-          "**/*",
-          "!**/__pycache__/*",
-          "!**/*.pyc",
-          "!**/tests/*"
+          "backend.exe",
+          "backend"
         ]
-      },
-      {
-        "from": "../backend",
-        "to": "backend"
       }
     ],
     "win": {
